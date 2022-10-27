@@ -27,8 +27,9 @@ jobs:
           - os: 'macos-12'
             label: 'osx'
             jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-macos-amd64.tar.gz
-        #   - os: 'windows-2022'
-        #     label: 'windows'
+          - os: 'windows-2022'
+            label: 'windows'
+            jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-windows-amd64.zip
     runs-on: ${{matrix.os}}
 
     steps:
@@ -44,22 +45,34 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: 'Download Liberica NIK'
+      - name: 'Download Liberica NIK (Linux and macOS)'
+        if: ${{ runner.os != 'Windows' }}
         run: |
           curl -L ${{ matrix.jdkDownloadUrl}} -o libericavm.zip
           mkdir -p ${{ env.INSTALL_DIR }}
           tar -C ${{ env.INSTALL_DIR }} -xzf libericavm.zip
 
+      - name: 'Download Liberica NIK (Windows)'
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          curl -L ${{ matrix.jdkDownloadUrl}} -o libericavm.zip
+          mkdir -p ${{ env.INSTALL_DIR }}
+          unzip libericavm.zip -d ${{ env.INSTALL_DIR }} 
+          ls -la 
+          ls -la ${{ env.INSTALL_DIR }} 
+        shell: bash
+
       - name: 'Install build dependencies (Linux)'
         if: ${{ runner.os == 'Linux' }}
         run: sudo apt-get install gcc zlib1g-dev build-essential libxi-dev libxrender-dev
 
-      - name: 'Build native image (Linux)'
-        if: ${{ runner.os == 'Linux' }}
+      - name: 'Build native image (Linux and Windows)'
+        if: ${{ runner.os == 'Linux' || runner.os == 'Windows' }}
         run: |
           export JAVA_HOME=$PWD/${{ env.NIK_HOME }}
           export PATH=$JAVA_HOME/bin:$PATH
           ./gradlew nativeCompile nativeImageDistZip -i
+        shell: bash
 
       - name: 'Build native image (macOS)'
         if: ${{ runner.os == 'macOS' }}

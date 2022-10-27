@@ -12,38 +12,64 @@ on:
 
 jobs:  
   build:
+    env:
+      INSTALL_DIR: jdk
+      NIK_HOME: jdk/bellsoft-liberica-vm-core-openjdk17-22.2.0
     strategy:
       matrix:
         #os: ['ubuntu-20.04']
         os: ['ubuntu-20.04', 'macos-12']
         # os: ['ubuntu-20.04', 'macos-12', 'windows-2022']
+        include:
+          - os: 'ubuntu-20.04'
+            label: 'linux'
+            jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-linux-amd64.tar.gz
+          - os: 'macos-12'
+            label: 'osx'
+            jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-macos-amd64.tar.gz
+        #   - os: 'windows-2022'
+        #     label: 'windows'
     runs-on: ${{matrix.os}}
 
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
 
-      - name: 'Add Developer Command Prompt for Microsoft Visual C++ '
-        if: ${{ runner.os == 'Windows' }}
-        uses: ilammy/msvc-dev-cmd@v1
-
-      - uses: graalvm/setup-graalvm@v1
+      - uses: actions/cache@v3
         with:
-          version: '22.3.0'
-          java-version: '17'
-          components: 'native-image'
-          cache: 'gradle'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      # Weil Code noch nicht sauber getrennt: gui vs non-gui
+      - name: 'Download Liberica NIK'
+        run: |
+          curl -L ${{ matrix.jdkDownloadUrl}} -o libericavm.zip
+          mkdir -p ${{ env.INSTALL_DIR }}
+          tar -C ${{ env.INSTALL_DIR }} -xzf libericavm.zip
+
       - name: 'Install build dependencies (Linux)'
         if: ${{ runner.os == 'Linux' }}
         run: sudo apt-get install gcc zlib1g-dev build-essential libxi-dev libxrender-dev
 
-      - name: 'Build native image'
-        run: ./gradlew nativeCompile nativeImageDistZip
+      - name: 'Build native image (Linux)'
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          export JAVA_HOME=$PWD/${{ env.NIK_HOME }}
+          export PATH=$JAVA_HOME/bin:$PATH
+          ./gradlew nativeCompile nativeImageDistZip -i
+
+      - name: 'Build native image (macOS)'
+        if: ${{ runner.os == 'macOS' }}
+        run: |
+          export JAVA_HOME=$PWD/${{ env.NIK_HOME }}/Contents/Home
+          export PATH=$JAVA_HOME/bin:$PATH
+          ./gradlew nativeCompile nativeImageDistZip -i
 
       - uses: actions/upload-artifact@v2
+        if: ${{ success() }}
         with:
           name: artifacts-native
           path: build/distributions/*.zip

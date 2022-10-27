@@ -14,9 +14,12 @@ def os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.curre
 
 dependencies {
     implementation "ch.interlis:ili2pg:${APP_VERSION}" 
-	implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18.jre6'
 
-    //implementation "ch.interlis:ili2pg:${APP_VERSION}" 
+    /* 
+    Explizite Angabe dieser Dependency ist notwendig, das sonst runtime error.
+    So könnte man auch die Version updaten.
+    */
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18.jre6' 
 }
 
 repositories {
@@ -36,7 +39,7 @@ graalvmNative {
             debug = false 
             verbose = true 
             fallback = false 
-            //configurationFileDirectories.from(file("conf-dir-"+getOperatingSystemName()+"/")) // TODO: parametrize
+            //configurationFileDirectories.from(file("conf-dir-"+getOperatingSystemName()+"/")) // TODO: mit gui wieder nötig
             configurationFileDirectories.from(file("conf-dir/")) // TODO: parametrize
 
             buildArgs.add('--enable-url-protocols=http,https') 
@@ -75,8 +78,6 @@ jreleaser {
         versionPattern = 'CUSTOM'
         java {
             groupId = 'ch.interlis'
-            //artifactId = myArtifactId
-            //version = '17'
         }
     }
 

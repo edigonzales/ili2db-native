@@ -35,6 +35,11 @@ jobs:
           cache: 'gradle'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Weil Code noch nicht sauber getrennt: gui vs non-gui
+      - name: 'Install build dependencies (Linux)'
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo apt-get install gcc zlib1g-dev build-essential libxi-dev libxrender-dev
+
       - name: 'Build native image'
         run: ./gradlew nativeCompile nativeImageDistZip
 

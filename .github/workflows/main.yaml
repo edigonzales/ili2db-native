@@ -68,9 +68,9 @@ jobs:
         run: |
           echo $Env:Path
           $Env:JAVA_HOME = "$pwd\${{ env.NIK_HOME }}"
-          setx -m PATH=%PATH%;%JAVA_HOME%\bin
-          echo %PATH%
-          echo %JAVA_HOME%
+          $Env:Path += ";$pwd\${{ env.NIK_HOME }}"
+          echo $Env:Path
+          echo $Env:JAVA_HOME
           choco install visualstudio2017-workload-vctools
 
       - name: 'Build native image (Windows)'

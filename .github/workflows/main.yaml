@@ -78,6 +78,10 @@ jobs:
           echo $Env:JAVA_HOME
           ./gradlew nativeCompile nativeImageDistZip -i
 
+      - name: Configure VS Toolchain (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: 'Install build dependencies (Linux)'
         if: ${{ runner.os == 'Linux' }}
         run: sudo apt-get install gcc zlib1g-dev build-essential libxi-dev libxrender-dev

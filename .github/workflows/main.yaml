@@ -76,7 +76,7 @@ jobs:
           $Env:Path += ";$pwd\${{ env.NIK_HOME }}\bin"
           echo $Env:Path
           echo $Env:JAVA_HOME
-          ./gradlew.cmd nativeCompile nativeImageDistZip -i
+          ./gradlew nativeCompile nativeImageDistZip -i
 
       - name: 'Install build dependencies (Linux)'
         if: ${{ runner.os == 'Linux' }}

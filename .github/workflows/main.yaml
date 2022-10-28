@@ -18,7 +18,8 @@ jobs:
     strategy:
       matrix:
         #os: ['ubuntu-20.04']
-        os: ['ubuntu-20.04', 'macos-12']
+        os: ['windows-2022']
+        # os: ['ubuntu-20.04', 'macos-12']
         # os: ['ubuntu-20.04', 'macos-12', 'windows-2022']
         include:
           - os: 'ubuntu-20.04'
@@ -61,6 +62,11 @@ jobs:
           ls -la 
           ls -la ${{ env.INSTALL_DIR }} 
         shell: bash
+
+      - name: 'Set up Visual C Build Tools Workload for Visual Studio 2017 Build Tools'
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          choco install visualstudio2017-workload-vctools
 
       - name: 'Install build dependencies (Linux)'
         if: ${{ runner.os == 'Linux' }}

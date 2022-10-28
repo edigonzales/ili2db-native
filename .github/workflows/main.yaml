@@ -22,12 +22,12 @@ jobs:
         # os: ['ubuntu-20.04', 'macos-12']
         # os: ['ubuntu-20.04', 'macos-12', 'windows-2022']
         include:
-          - os: 'ubuntu-20.04'
-            label: 'linux'
-            jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-linux-amd64.tar.gz
-          - os: 'macos-12'
-            label: 'osx'
-            jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-macos-amd64.tar.gz
+          # - os: 'ubuntu-20.04'
+          #   label: 'linux'
+          #   jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-linux-amd64.tar.gz
+          # - os: 'macos-12'
+          #   label: 'osx'
+          #   jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-macos-amd64.tar.gz
           - os: 'windows-2022'
             label: 'windows'
             jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-windows-amd64.zip
@@ -63,17 +63,25 @@ jobs:
           ls -la ${{ env.INSTALL_DIR }} 
         shell: bash
 
-      - name: 'Set up Visual C Build Tools Workload for Visual Studio 2017 Build Tools'
+      - name: 'Install build dependencies (Windows)'
         if: ${{ runner.os == 'Windows' }}
         run: |
           choco install visualstudio2017-workload-vctools
+
+      - name: 'Build native image (Windows)'
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          echo %PATH%
+          setx -m JAVA_HOME $(pwd)\${{ env.NIK_HOME }}
+          setx -m PATH=%PATH%;%JAVA_HOME%\bin
+          ./gradlew.cmd nativeCompile nativeImageDistZip -i
 
       - name: 'Install build dependencies (Linux)'
         if: ${{ runner.os == 'Linux' }}
         run: sudo apt-get install gcc zlib1g-dev build-essential libxi-dev libxrender-dev
 
-      - name: 'Build native image (Linux and Windows)'
-        if: ${{ runner.os == 'Linux' || runner.os == 'Windows' }}
+      - name: 'Build native image (Linux)'
+        if: ${{ runner.os == 'Linux' }}
         run: |
           export JAVA_HOME=$PWD/${{ env.NIK_HOME }}
           export PATH=$JAVA_HOME/bin:$PATH

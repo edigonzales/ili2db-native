@@ -63,10 +63,10 @@ jobs:
           ls -la ${{ env.INSTALL_DIR }} 
         shell: bash
 
-      - name: 'Install build dependencies (Windows)'
-        if: ${{ runner.os == 'Windows' }}
-        run: |
-          choco install visualstudio2017-workload-vctools
+      # - name: 'Install build dependencies (Windows)'
+      #   if: ${{ runner.os == 'Windows' }}
+      #   run: |
+      #     choco install visualstudio2017-workload-vctools
 
       - name: Configure VS Toolchain (Windows)
         if: ${{ runner.os == 'Windows' }}
@@ -75,10 +75,8 @@ jobs:
       - name: 'Build native image (Windows)'
         if: ${{ runner.os == 'Windows' }}
         run: |
-          echo $Env:Path
           $Env:JAVA_HOME = "$pwd\${{ env.NIK_HOME }}"
           $Env:Path += ";$pwd\${{ env.NIK_HOME }}\bin"
-          echo $Env:Path
           echo $Env:JAVA_HOME
           ./gradlew nativeCompile nativeImageDistZip -i
 

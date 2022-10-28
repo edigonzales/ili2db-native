@@ -68,7 +68,7 @@ jobs:
         run: |
           echo $Env:Path
           $Env:JAVA_HOME = "$pwd\${{ env.NIK_HOME }}"
-          $Env:Path += ";$pwd\${{ env.NIK_HOME }}"
+          $Env:Path += ";$pwd\${{ env.NIK_HOME }}\bin"
           echo $Env:Path
           echo $Env:JAVA_HOME
           choco install visualstudio2017-workload-vctools

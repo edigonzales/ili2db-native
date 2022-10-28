@@ -14,23 +14,23 @@ jobs:
   build:
     env:
       INSTALL_DIR: jdk
-      NIK_HOME: jdk/bellsoft-liberica-vm-core-openjdk17-22.2.0
+      NIK_HOME: jdk/bellsoft-liberica-vm-core-openjdk17-22.3.0
     strategy:
       matrix:
         #os: ['ubuntu-20.04']
-        os: ['windows-2022']
+        #os: ['windows-2022']
         # os: ['ubuntu-20.04', 'macos-12']
-        # os: ['ubuntu-20.04', 'macos-12', 'windows-2022']
+        os: ['ubuntu-20.04', 'macos-12', 'windows-2022']
         include:
-          # - os: 'ubuntu-20.04'
-          #   label: 'linux'
-          #   jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-linux-amd64.tar.gz
-          # - os: 'macos-12'
-          #   label: 'osx'
-          #   jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-macos-amd64.tar.gz
+          - os: 'ubuntu-20.04'
+            label: 'linux'
+            jdkDownloadUrl: https://download.bell-sw.com/vm/22.3.0/bellsoft-liberica-vm-core-openjdk17.0.5+8-22.3.0+2-linux-amd64.tar.gz
+          - os: 'macos-12'
+            label: 'osx'
+            jdkDownloadUrl: https://download.bell-sw.com/vm/22.3.0/bellsoft-liberica-vm-core-openjdk17.0.5+8-22.3.0+2-macos-amd64.tar.gz
           - os: 'windows-2022'
             label: 'windows'
-            jdkDownloadUrl: https://download.bell-sw.com/vm/22.2.0/bellsoft-liberica-vm-core-openjdk17.0.4.1+1-22.2.0+3-windows-amd64.zip
+            jdkDownloadUrl: https://download.bell-sw.com/vm/22.3.0/bellsoft-liberica-vm-core-openjdk17.0.5+8-22.3.0+2-windows-amd64.zip
     runs-on: ${{matrix.os}}
 
     steps:
@@ -46,13 +46,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: 'Download Liberica NIK (Linux and macOS)'
-        if: ${{ runner.os != 'Windows' }}
-        run: |
-          curl -L ${{ matrix.jdkDownloadUrl}} -o libericavm.zip
-          mkdir -p ${{ env.INSTALL_DIR }}
-          tar -C ${{ env.INSTALL_DIR }} -xzf libericavm.zip
-
       - name: 'Download Liberica NIK (Windows)'
         if: ${{ runner.os == 'Windows' }}
         run: |
@@ -63,10 +56,12 @@ jobs:
           ls -la ${{ env.INSTALL_DIR }} 
         shell: bash
 
-      # - name: 'Install build dependencies (Windows)'
-      #   if: ${{ runner.os == 'Windows' }}
-      #   run: |
-      #     choco install visualstudio2017-workload-vctools
+      - name: 'Download Liberica NIK (Linux and macOS)'
+        if: ${{ runner.os != 'Windows' }}
+        run: |
+          curl -L ${{ matrix.jdkDownloadUrl}} -o libericavm.zip
+          mkdir -p ${{ env.INSTALL_DIR }}
+          tar -C ${{ env.INSTALL_DIR }} -xzf libericavm.zip
 
       - name: Configure VS Toolchain (Windows)
         if: ${{ runner.os == 'Windows' }}

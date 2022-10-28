@@ -101,10 +101,10 @@ jreleaser {
                 path = "./artifacts-native/ili2pg-${APP_VERSION}_${buildNumber}-osx-x86-64.zip"
                 platform = 'osx'
             }
-            // artifact {
-            //     path = "./artifacts-native/ili2pg-${APP_VERSION}_${buildNumber}-windows-x86-64.zip"
-            //     platform = 'windows'
-            // }
+            artifact {
+                path = "./artifacts-native/ili2pg-${APP_VERSION}_${buildNumber}-windows-x86-64.zip"
+                platform = 'windows'
+            }
         }
     }
 }

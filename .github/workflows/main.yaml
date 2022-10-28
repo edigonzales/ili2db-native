@@ -67,7 +67,7 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         run: |
           echo $Env:Path
-          $Env:JAVA_HOME = $pwd + \${{ env.NIK_HOME }}
+          $Env:JAVA_HOME = "$pwd\${{ env.NIK_HOME }}"
           setx -m PATH=%PATH%;%JAVA_HOME%\bin
           echo %PATH%
           echo %JAVA_HOME%

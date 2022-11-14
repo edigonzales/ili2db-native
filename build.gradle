@@ -6,7 +6,7 @@ plugins {
 
 //version '1.12.1'+System.getProperty('release','-SNAPSHOT')
 
-def APP_VERSION = "4.9.0"
+def APP_VERSION = "4.9.1"
 
 def myArtifactId = "ili2pg"
 def buildNumber = System.env.GITHUB_RUN_NUMBER
@@ -19,7 +19,8 @@ dependencies {
     Explizite Angabe dieser Dependency ist notwendig, das sonst runtime error.
     So könnte man auch die Version updaten.
     */
-    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18.jre6' 
+    //implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18.jre6' 
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18' 
 }
 
 repositories {

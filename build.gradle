@@ -4,8 +4,6 @@ plugins {
     id 'org.jreleaser' version '1.2.0'
 }
 
-//version '1.12.1'+System.getProperty('release','-SNAPSHOT')
-
 def APP_VERSION = "4.9.1"
 
 def myArtifactId = "ili2pg"

@@ -1,10 +1,10 @@
 plugins {
     id 'application'
-    id 'org.graalvm.buildtools.native' version '0.9.16'
+    id 'org.graalvm.buildtools.native' version '0.9.22'
     id 'org.jreleaser' version '1.2.0'
 }
 
-def APP_VERSION = "4.9.1"
+def APP_VERSION = "4.11.0"
 
 def myArtifactId = "ili2pg"
 def buildNumber = System.env.GITHUB_RUN_NUMBER
@@ -43,7 +43,10 @@ graalvmNative {
             configurationFileDirectories.from(file("conf-dir/"))
 
             buildArgs.add('--enable-url-protocols=http,https') 
-                        
+            //buildArgs.add('--pgo-instrument') 
+            //buildArgs.add("--pgo=$projectDir/conf-dir/default.iprof.gzip") 
+            //buildArgs.add('--gc=G1') 
+
             jvmArgs.add("-Djava.awt.headless=false")
 
             useFatJar = true
